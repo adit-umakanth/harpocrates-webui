@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import firebaseApp from '$lib/firebase';
+	import { userState } from '$lib/userState.svelte';
 	import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 	const auth = getAuth(firebaseApp);
@@ -19,6 +20,12 @@
 	function backToMain() {
 		goto('/');
 	}
+
+	$effect(() => {
+		if (userState.user !== null) {
+			goto('/journal');
+		}
+	});
 </script>
 
 <p>Login</p>
