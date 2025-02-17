@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import firebaseApp from '$lib/firebase';
-	import { passwordState } from '$lib/passwordState.svelte';
 	import { userState } from '$lib/userState.svelte';
 	import {
 		addDoc,
@@ -87,4 +86,3 @@
 	{#if page.params.date === entry.date}<p>{entry.entry}</p>{/if}
 	<br />
 {/each}
-{passwordState.password}

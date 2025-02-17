@@ -8,7 +8,7 @@ type UserInfo = {
 }
 
 function createDbState() {
-    let userInfoDoc = $state<UserInfo>({});
+    let userInfoDoc = $state<UserInfo | null>(null);
     let journalEntryDocs = $state();
     let db = getFirestore(firebaseApp);
     let userInfoDocReference = doc(db, 'users', userState.user!.uid)
@@ -16,11 +16,18 @@ function createDbState() {
     onSnapshot(userInfoDocReference, async (newDoc) => {
         userInfoDoc = newDoc.data() as UserInfo;
         if (!("salt" in userInfoDoc)) {
+            let saltBuffer = window.crypto.getRandomValues(new Uint8Array(32))
             await updateDoc(userInfoDocReference, {
-                salt: window.crypto.getRandomValues(new Uint8Array(32))
+                salt: btoa(String.fromCharCode(...saltBuffer))
             })
         }
     })
+    return {
+        get userInfoDoc() {
+            return userInfoDoc;
+        },
+        userInfoDocReference
+    }
 }
 
 export const dbState = createDbState();

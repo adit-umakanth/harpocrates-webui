@@ -1,14 +1,14 @@
 <script>
 	import { goto } from '$app/navigation';
 	import firebaseApp from '$lib/firebase';
-	import { passwordState } from '$lib/passwordState.svelte';
+	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
 	import { getAuth } from 'firebase/auth';
 
 	let { children } = $props();
 	const auth = getAuth(firebaseApp);
 
-	let encryptionPassword = $state('');
+	let password = $state('');
 
 	$effect(() => {
 		if (userState.user === null) {
@@ -19,8 +19,9 @@
 
 <nav class="border-b-2 border-gray-500 bg-white">
 	<button class="btn" onclick={() => auth.signOut()}>Sign out</button><br /><br />
-	<input bind:value={encryptionPassword} />
-	<button class="btn" onclick={() => (passwordState.password = encryptionPassword)}>Unlock</button>
+	<input bind:value={password} />
+	<button class="btn" onclick={() => keyState.deriveKey(password)}>Unlock</button>
 </nav>
+{keyState.derivedKey}
 <br />
 {@render children()}
