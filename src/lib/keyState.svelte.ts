@@ -1,7 +1,7 @@
 import { dbState } from "./dbState.svelte";
 
 function createKeyState() {
-    let derivedKey = $state();
+    let derivedKey = $state<CryptoKey | null>();
     async function deriveKey(password: string) {
         const encodedPassword = new TextEncoder().encode(password)
         const importedKey = await window.crypto.subtle.importKey("raw", encodedPassword, "PBKDF2", false, ['deriveKey'])

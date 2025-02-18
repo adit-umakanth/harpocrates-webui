@@ -22,6 +22,5 @@
 	<input bind:value={password} />
 	<button class="btn" onclick={() => keyState.deriveKey(password)}>Unlock</button>
 </nav>
-{keyState.derivedKey}
 <br />
 {@render children()}
