@@ -22,12 +22,12 @@
 	}
 
 	$effect(() => {
-		if (userState.user !== null) {
+		if (userState.user !== null && userState.user !== undefined) {
 			goto('/journal');
 		}
 	});
 </script>
 
 <p>Login</p>
-<button onclick={initiateSignIn}>Google</button>
-<button onclick={backToMain}>Back to main</button>
+<button class="btn" onclick={initiateSignIn}>Google</button>
+<button class="btn" onclick={backToMain}>Back to main</button>

@@ -1,11 +1,14 @@
 import { getAuth, onAuthStateChanged, type Auth, type User } from 'firebase/auth';
 import firebaseApp from './firebase';
+import { dbState } from './dbState.svelte';
 
-async function createUserState(auth: Auth) {
-	await auth.authStateReady();
-	let user = $state<User | null>(auth.currentUser);
+function createUserState(auth: Auth) {
+	let user = $state.raw<User | null | undefined>(undefined);
 	onAuthStateChanged(auth, (currentUser) => {
 		user = currentUser;
+		if (currentUser !== null) {
+			dbState.loadDbData(currentUser.uid);
+		}
 	});
 	return {
 		get user() {
@@ -14,4 +17,4 @@ async function createUserState(auth: Auth) {
 	};
 }
 
-export const userState = await createUserState(getAuth(firebaseApp));
+export const userState = createUserState(getAuth(firebaseApp));

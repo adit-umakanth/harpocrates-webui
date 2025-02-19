@@ -19,7 +19,7 @@
 
 <nav class="border-b-2 border-gray-500 bg-white">
 	<button class="btn" onclick={() => auth.signOut()}>Sign out</button><br /><br />
-	<input bind:value={password} />
+	<input type="password" bind:value={password} />
 	<button class="btn" onclick={() => keyState.deriveKey(password)}>Unlock</button>
 </nav>
 <br />
