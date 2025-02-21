@@ -96,10 +96,10 @@
 
 <p class="capitalize">{page.params.journal}</p>
 <br />
-<br />
 <input type="date" bind:value={newEntryState.date} />
 <textarea bind:value={newEntryState.entry}></textarea>
 <button class="btn" onclick={addJournalEntry}>+</button>
+<br />
 <br />
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 {#each entries! as entry}

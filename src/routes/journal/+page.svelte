@@ -14,6 +14,7 @@
 
 <input bind:value={journalToAdd} /><button class="btn" onclick={addJournal}>+</button>
 <br />
+<br />
 {#if dbState.userInfoDoc === null}
 	loading...
 {:else}
