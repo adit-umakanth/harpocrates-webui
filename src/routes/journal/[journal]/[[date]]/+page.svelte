@@ -104,7 +104,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 {#each entries! as entry}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<p onclick={() => goto(`/journal/${page.params.journal}/${entry.date}`)}>
+	<p onclick={() => goto(page.params.date === entry.date? `/journal/${page.params.journal}`: `/journal/${page.params.journal}/${entry.date}`)}>
 		{entry.date}
 		{#if page.params.date === entry.date}<button class="btn" onclick={() => deleteEntry(entry.id)}
 				>-</button
