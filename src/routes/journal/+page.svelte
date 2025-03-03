@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { dbState } from '$lib/dbState.svelte';
-	import { arrayUnion, doc, getFirestore, onSnapshot, updateDoc } from 'firebase/firestore';
-	import { onDestroy } from 'svelte';
+	import { arrayUnion, updateDoc } from 'firebase/firestore';
 
 	let journalToAdd = $state('');
 	function addJournal() {
