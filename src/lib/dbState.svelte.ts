@@ -1,4 +1,11 @@
-import { doc, getFirestore, onSnapshot, updateDoc } from 'firebase/firestore';
+import {
+	doc,
+	DocumentReference,
+	getFirestore,
+	onSnapshot,
+	updateDoc,
+	type DocumentData
+} from 'firebase/firestore';
 import firebaseApp from './firebase';
 
 type UserInfo = {
@@ -9,16 +16,16 @@ type UserInfo = {
 function createDbState() {
 	let userInfoDoc = $state.raw<UserInfo | null>(null);
 	let journalEntryDocs = $state();
-	let userInfoDocReference = $state.raw();
+	let userInfoDocReference: DocumentReference<DocumentData, DocumentData>;
 
 	function loadDbData(uid: string) {
 		let db = getFirestore(firebaseApp);
 		userInfoDocReference = doc(db, 'users', uid);
-		onSnapshot($state.snapshot(userInfoDocReference), async (newDoc) => {
+		onSnapshot(userInfoDocReference, async (newDoc) => {
 			userInfoDoc = newDoc.data() as UserInfo;
 			if (!('salt' in userInfoDoc)) {
 				let saltBuffer = window.crypto.getRandomValues(new Uint8Array(32));
-				await updateDoc($state.snapshot(userInfoDocReference), {
+				await updateDoc(userInfoDocReference, {
 					salt: btoa(String.fromCharCode(...saltBuffer))
 				});
 			}
