@@ -3,6 +3,8 @@
 	import firebaseApp from '$lib/firebase';
 	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
+	import { faLock, faRightFromBracket, faUnlock } from '@fortawesome/free-solid-svg-icons';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { getAuth } from 'firebase/auth';
 
 	let { children } = $props();
@@ -25,12 +27,16 @@
 			onclick={() => {
 				keyState.deriveKey(password);
 				password = '';
-			}}>Unlock</button
+			}}><FontAwesomeIcon icon={faUnlock} /> Unlock</button
 		>
 	{:else}
-		<button class="btn" onclick={() => (keyState.derivedKey = null)}>Lock</button>
+		<button class="btn" onclick={() => (keyState.derivedKey = null)}
+			><FontAwesomeIcon icon={faLock} /> Lock</button
+		>
 	{/if}
-	<button class="btn" onclick={() => auth.signOut()}>Sign out</button><br /><br />
+	<button class="btn" onclick={() => auth.signOut()}
+		><FontAwesomeIcon icon={faRightFromBracket} /> Sign out</button
+	><br /><br />
 </nav>
 <br />
 {@render children()}

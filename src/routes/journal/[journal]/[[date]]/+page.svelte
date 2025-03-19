@@ -5,25 +5,17 @@
 	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import {
-		faEdit,
-		faMinus,
-		faMinusSquare,
-		faPlus,
-		faPlusSquare
-	} from '@fortawesome/free-solid-svg-icons';
+	import { faMinus, faPencil, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import {
 		addDoc,
 		collection,
 		deleteDoc,
 		doc,
-		getDoc,
 		getFirestore,
 		onSnapshot,
 		orderBy,
 		query,
-		where,
-		type DocumentData
+		where
 	} from 'firebase/firestore';
 	import { onDestroy } from 'svelte';
 
@@ -122,7 +114,7 @@
 	>
 		{entry.date}
 		{#if page.params.date === entry.date}<button class="btn"
-				><FontAwesomeIcon icon={faEdit} /></button
+				><FontAwesomeIcon icon={faPencil} /></button
 			><button class="btn" onclick={() => deleteEntry(entry.id)}
 				><FontAwesomeIcon icon={faMinus} /></button
 			>{/if}
