@@ -101,8 +101,10 @@
 <button class="btn" onclick={addJournalEntry}><FontAwesomeIcon icon={faPlus} /></button>
 <br />
 <br />
+<hr />
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 {#each entries! as entry}
+	<br />
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<p
 		onclick={() =>
@@ -127,4 +129,5 @@
 		</p>
 	{/if}
 	<br />
+	<hr />
 {/each}
