@@ -17,12 +17,18 @@
 	});
 </script>
 
-<nav class="border-b-2 border-gray-500 bg-white flex flex-row p-2">
+<nav class="flex flex-row border-b-2 border-gray-500 bg-white p-2">
 	{#if keyState.derivedKey === null}
 		<input type="password" bind:value={password} />
-		<button class="btn" onclick={() => {keyState.deriveKey(password); password = ''}}>Unlock</button>
+		<button
+			class="btn"
+			onclick={() => {
+				keyState.deriveKey(password);
+				password = '';
+			}}>Unlock</button
+		>
 	{:else}
-		<button class="btn" onclick={() => keyState.derivedKey = null}>Lock</button>
+		<button class="btn" onclick={() => (keyState.derivedKey = null)}>Lock</button>
 	{/if}
 	<button class="btn" onclick={() => auth.signOut()}>Sign out</button><br /><br />
 </nav>

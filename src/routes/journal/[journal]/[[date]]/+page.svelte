@@ -4,6 +4,14 @@
 	import firebaseApp from '$lib/firebase';
 	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import {
+		faEdit,
+		faMinus,
+		faMinusSquare,
+		faPlus,
+		faPlusSquare
+	} from '@fortawesome/free-solid-svg-icons';
 	import {
 		addDoc,
 		collection,
@@ -98,16 +106,25 @@
 <br />
 <input type="date" bind:value={newEntryState.date} />
 <textarea bind:value={newEntryState.entry}></textarea>
-<button class="btn" onclick={addJournalEntry}>+</button>
+<button class="btn" onclick={addJournalEntry}><FontAwesomeIcon icon={faPlus} /></button>
 <br />
 <br />
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 {#each entries! as entry}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<p onclick={() => goto(page.params.date === entry.date? `/journal/${page.params.journal}`: `/journal/${page.params.journal}/${entry.date}`)}>
+	<p
+		onclick={() =>
+			goto(
+				page.params.date === entry.date
+					? `/journal/${page.params.journal}`
+					: `/journal/${page.params.journal}/${entry.date}`
+			)}
+	>
 		{entry.date}
-		{#if page.params.date === entry.date}<button class="btn" onclick={() => deleteEntry(entry.id)}
-				>-</button
+		{#if page.params.date === entry.date}<button class="btn"
+				><FontAwesomeIcon icon={faEdit} /></button
+			><button class="btn" onclick={() => deleteEntry(entry.id)}
+				><FontAwesomeIcon icon={faMinus} /></button
 			>{/if}
 	</p>
 	{#if page.params.date === entry.date}
