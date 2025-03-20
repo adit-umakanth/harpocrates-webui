@@ -96,9 +96,11 @@
 
 <p class="capitalize">{page.params.journal}</p>
 <br />
-<input type="date" bind:value={newEntryState.date} />
-<textarea bind:value={newEntryState.entry}></textarea>
-<button class="btn" onclick={addJournalEntry}><FontAwesomeIcon icon={faPlus} /></button>
+<div class="flex flex-row p-2">
+	<input class="basis-1/3" type="date" bind:value={newEntryState.date} />
+	<textarea bind:value={newEntryState.entry}></textarea>
+	<button class="btn" onclick={addJournalEntry}><FontAwesomeIcon icon={faPlus} /></button>
+</div>
 <br />
 <br />
 <hr />
