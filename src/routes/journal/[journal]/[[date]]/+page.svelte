@@ -5,7 +5,7 @@
 	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faMinus, faPencil, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faEdit, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import {
 		addDoc,
 		collection,
@@ -118,7 +118,7 @@
 	>
 		{entry.date}
 		{#if page.params.date === entry.date}<button class="btn"
-				><FontAwesomeIcon icon={faPencil} /></button
+				><FontAwesomeIcon icon={faEdit} /></button
 			><button class="btn" onclick={() => deleteEntry(entry.id)}
 				><FontAwesomeIcon icon={faMinus} /></button
 			>{/if}
