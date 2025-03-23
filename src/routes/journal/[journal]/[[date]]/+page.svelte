@@ -9,45 +9,39 @@
 	import {
 		addDoc,
 		collection,
+		CollectionReference,
 		deleteDoc,
 		doc,
 		getFirestore,
-		onSnapshot,
 		orderBy,
 		query,
-		where
+		where,
+		type DocumentData
 	} from 'firebase/firestore';
-	import { onDestroy } from 'svelte';
+	import { dbState } from '$lib/dbState.svelte';
 
 	const db = getFirestore(firebaseApp);
-	type Entry = {
-		id: string;
-		date: string;
-		entry: string;
-		journal: string;
-		iv?: string;
-	};
-	let entries = $state<[Entry] | null>(null);
+
 	const emptyEntryState = {
 		date: '',
 		entry: ''
 	};
 	let newEntryState = $state(emptyEntryState);
-	let entriesCollection = collection(db, `users/${userState.user!.uid}/entries`);
-	const journalQuery = query(
-		entriesCollection,
-		where('journal', '==', page.params.journal),
-		orderBy('date', 'desc')
-	);
-	const unsub = onSnapshot(journalQuery, (querySnapshot) => {
-		const tempEntries: any = [];
-		querySnapshot.forEach((doc) => {
-			tempEntries.push({ ...doc.data(), id: doc.id });
-		});
-		entries = tempEntries;
-	});
+	let entriesCollection: CollectionReference<DocumentData, DocumentData> | null = null;
 
-	$inspect(entries);
+	$effect(() => {
+		console.log(userState.user);
+		if (userState.user === undefined) {
+			return;
+		}
+		entriesCollection = collection(db, `users/${userState.user!.uid}/entries`);
+		const journalQuery = query(
+			entriesCollection,
+			where('journal', '==', page.params.journal),
+			orderBy('date', 'desc')
+		);
+		dbState.loadJournalEntries(userState.user!.uid, journalQuery);
+	});
 
 	async function addJournalEntry() {
 		let ivBuffer = window.crypto.getRandomValues(new Uint8Array(12));
@@ -56,7 +50,7 @@
 			keyState.derivedKey!,
 			new TextEncoder().encode(newEntryState.entry)
 		);
-		addDoc(entriesCollection, {
+		addDoc(entriesCollection!, {
 			date: newEntryState.date,
 			journal: page.params.journal,
 			iv: btoa(String.fromCharCode(...ivBuffer)),
@@ -88,10 +82,6 @@
 		deleteDoc(doc(db, `users/${userState.user!.uid}/entries`, documentId));
 		goto(`/journal/${page.params.journal}`);
 	}
-
-	onDestroy(() => {
-		unsub();
-	});
 </script>
 
 <p class="capitalize">{page.params.journal}</p>
@@ -104,32 +94,36 @@
 <br />
 <br />
 <hr />
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-{#each entries! as entry}
-	<br />
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<p
-		onclick={() =>
-			goto(
-				page.params.date === entry.date
-					? `/journal/${page.params.journal}`
-					: `/journal/${page.params.journal}/${entry.date}`
-			)}
-	>
-		{entry.date}
-		{#if page.params.date === entry.date}<button class="btn"
-				><FontAwesomeIcon icon={faEdit} /></button
-			><button class="btn" onclick={() => deleteEntry(entry.id)}
-				><FontAwesomeIcon icon={faMinus} /></button
-			>{/if}
-	</p>
-	{#if page.params.date === entry.date}
-		<p style="white-space: pre-line;">
-			{#await decryptEntry(entry.entry, entry.iv) then plaintext}
-				{plaintext}
-			{/await}
+{#if dbState.journalEntryDocs === null}
+	loading...
+{:else}
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	{#each dbState.journalEntryDocs! as entry}
+		<br />
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<p
+			onclick={() =>
+				goto(
+					page.params.date === entry.date
+						? `/journal/${page.params.journal}`
+						: `/journal/${page.params.journal}/${entry.date}`
+				)}
+		>
+			{entry.date}
+			{#if page.params.date === entry.date}<button class="btn"
+					><FontAwesomeIcon icon={faEdit} /></button
+				><button class="btn" onclick={() => deleteEntry(entry.id)}
+					><FontAwesomeIcon icon={faMinus} /></button
+				>{/if}
 		</p>
-	{/if}
-	<br />
-	<hr />
-{/each}
+		{#if page.params.date === entry.date}
+			<p style="white-space: pre-line;">
+				{#await decryptEntry(entry.entry, entry.iv) then plaintext}
+					{plaintext}
+				{/await}
+			</p>
+		{/if}
+		<br />
+		<hr />
+	{/each}
+{/if}
