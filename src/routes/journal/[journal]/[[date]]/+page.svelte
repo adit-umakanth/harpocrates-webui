@@ -15,12 +15,17 @@
 		getFirestore,
 		orderBy,
 		query,
+		updateDoc,
 		where,
 		type DocumentData
 	} from 'firebase/firestore';
 	import { dbState } from '$lib/dbState.svelte';
+	import autosize from '$lib/autosize.svelte';
 
 	const db = getFirestore(firebaseApp);
+
+	let editMode = $state(false);
+	let editText = $state('');
 
 	const emptyEntryState = {
 		date: '',
@@ -30,7 +35,6 @@
 	let entriesCollection: CollectionReference<DocumentData, DocumentData> | null = null;
 
 	$effect(() => {
-		console.log(userState.user);
 		if (userState.user === undefined) {
 			return;
 		}
@@ -43,20 +47,32 @@
 		dbState.loadJournalEntries(userState.user!.uid, journalQuery);
 	});
 
-	async function addJournalEntry() {
+	async function encryptEntry(plaintext: string) {
 		let ivBuffer = window.crypto.getRandomValues(new Uint8Array(12));
 		let cipherArray = await window.crypto.subtle.encrypt(
 			{ name: 'AES-GCM', iv: ivBuffer },
 			keyState.derivedKey!,
-			new TextEncoder().encode(newEntryState.entry)
+			new TextEncoder().encode(plaintext)
 		);
+		return {
+			iv: btoa(String.fromCharCode(...ivBuffer)),
+			entry: btoa(String.fromCharCode(...new Uint8Array(cipherArray)))
+		};
+	}
+
+	async function addJournalEntry() {
+		let encryptedData = await encryptEntry(newEntryState.entry);
 		addDoc(entriesCollection!, {
 			date: newEntryState.date,
 			journal: page.params.journal,
-			iv: btoa(String.fromCharCode(...ivBuffer)),
-			entry: btoa(String.fromCharCode(...new Uint8Array(cipherArray)))
+			...encryptedData
 		});
 		newEntryState = emptyEntryState;
+	}
+
+	async function updateJournalEntry(documentId: string) {
+		let encryptedData = await encryptEntry(editText);
+		updateDoc(doc(db, `users/${userState.user!.uid}/entries`, documentId), encryptedData);
 	}
 
 	async function decryptEntry(ciphertext: string, iv: string | null | undefined) {
@@ -71,7 +87,9 @@
 				keyState.derivedKey!,
 				cipherArray
 			);
-			return new TextDecoder().decode(decryptedArray);
+			const decryptedText = new TextDecoder().decode(decryptedArray);
+			editText = decryptedText;
+			return decryptedText;
 		} catch (err) {
 			console.error(err);
 		}
@@ -86,10 +104,12 @@
 
 <p class="capitalize">{page.params.journal}</p>
 <br />
-<div class="flex flex-row p-2">
-	<input class="basis-1/3" type="date" bind:value={newEntryState.date} />
+<div class="flex flex-col gap-2 p-10">
+	<input type="date" bind:value={newEntryState.date} />
 	<textarea bind:value={newEntryState.entry}></textarea>
-	<button class="btn" onclick={addJournalEntry}><FontAwesomeIcon icon={faPlus} /></button>
+	<button class="btn" onclick={addJournalEntry} style="width: fit-content;"
+		><FontAwesomeIcon icon={faPlus} /></button
+	>
 </div>
 <br />
 <br />
@@ -101,16 +121,18 @@
 	{#each dbState.journalEntryDocs! as entry}
 		<br />
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<p
-			onclick={() =>
-				goto(
-					page.params.date === entry.date
-						? `/journal/${page.params.journal}`
-						: `/journal/${page.params.journal}/${entry.date}`
-				)}
-		>
-			{entry.date}
-			{#if page.params.date === entry.date}<button class="btn"
+		<p>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<span
+				onclick={() =>
+					goto(
+						page.params.date === entry.date
+							? `/journal/${page.params.journal}`
+							: `/journal/${page.params.journal}/${entry.date}`
+					)}>{entry.date}</span
+			>
+			{#if page.params.date === entry.date}<button class="btn" onclick={() => (editMode = true)}
 					><FontAwesomeIcon icon={faEdit} /></button
 				><button class="btn" onclick={() => deleteEntry(entry.id)}
 					><FontAwesomeIcon icon={faMinus} /></button
@@ -119,7 +141,15 @@
 		{#if page.params.date === entry.date}
 			<p style="white-space: pre-line;">
 				{#await decryptEntry(entry.entry, entry.iv) then plaintext}
-					{plaintext}
+					{#if editMode}
+						<textarea bind:value={editText} use:autosize style="width: 100%;"></textarea>
+						<button class="btn">Cancel</button><button
+							class="btn"
+							onclick={() => updateJournalEntry(entry.id)}>Save</button
+						>
+					{:else}
+						{plaintext}
+					{/if}
 				{/await}
 			</p>
 		{/if}
