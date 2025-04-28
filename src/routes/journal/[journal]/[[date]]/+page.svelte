@@ -5,7 +5,13 @@
 	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faEdit, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faCaretDown,
+		faCaretRight,
+		faEdit,
+		faMinus,
+		faPlus
+	} from '@fortawesome/free-solid-svg-icons';
 	import {
 		addDoc,
 		collection,
@@ -112,8 +118,7 @@
 	>
 </div>
 <br />
-<br />
-<hr />
+<hr class="border-blue-300" />
 {#if dbState.journalEntryDocs === null}
 	loading...
 {:else}
@@ -125,12 +130,19 @@
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<span
+				class="p-4"
 				onclick={() =>
 					goto(
 						page.params.date === entry.date
 							? `/journal/${page.params.journal}`
 							: `/journal/${page.params.journal}/${entry.date}`
-					)}>{entry.date}</span
+					)}
+				>{#if page.params.date === entry.date}
+					<FontAwesomeIcon class="pr-2 text-blue-500" icon={faCaretDown} />
+				{:else}
+					<FontAwesomeIcon class="pr-2 text-blue-500" icon={faCaretRight} />
+				{/if}
+				{entry.date}</span
 			>
 			{#if page.params.date === entry.date}<button class="btn" onclick={() => (editMode = true)}
 					><FontAwesomeIcon icon={faEdit} /></button
@@ -139,21 +151,19 @@
 				>{/if}
 		</p>
 		{#if page.params.date === entry.date}
-			<p style="white-space: pre-line;">
-				{#await decryptEntry(entry.entry, entry.iv) then plaintext}
-					{#if editMode}
-						<textarea bind:value={editText} use:autosize style="width: 100%;"></textarea>
-						<button class="btn">Cancel</button><button
-							class="btn"
-							onclick={() => updateJournalEntry(entry.id)}>Save</button
-						>
-					{:else}
-						{plaintext}
-					{/if}
-				{/await}
-			</p>
+			{#await decryptEntry(entry.entry, entry.iv) then plaintext}
+				{#if editMode}
+					<textarea bind:value={editText} use:autosize style="width: 100%;"></textarea>
+					<button class="btn">Cancel</button><button
+						class="btn"
+						onclick={() => updateJournalEntry(entry.id)}>Save</button
+					>
+				{:else}
+					<div class="whitespace-pre-line p-4">{plaintext}</div>
+				{/if}
+			{/await}
 		{/if}
 		<br />
-		<hr />
+		<hr class="border-blue-300" />
 	{/each}
 {/if}
