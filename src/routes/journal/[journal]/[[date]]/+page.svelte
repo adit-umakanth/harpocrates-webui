@@ -26,7 +26,6 @@
 		type DocumentData
 	} from 'firebase/firestore';
 	import { dbState } from '$lib/dbState.svelte';
-	import autosize from '$lib/autosize.svelte';
 
 	const db = getFirestore(firebaseApp);
 
@@ -111,10 +110,16 @@
 
 <p class="capitalize">{page.params.journal}</p>
 <br />
-<div class="flex flex-col gap-2 p-10">
+<div class="flex flex-col gap-2 p-4">
 	<input type="date" bind:value={newEntryState.date} />
-	<textarea bind:value={newEntryState.entry}></textarea>
-	<button class="btn" onclick={addJournalEntry} style="width: fit-content;"
+	<div
+		class="auto-grow"
+		bind:innerText={newEntryState.entry}
+		contenteditable="true"
+		role="textbox"
+		aria-multiline="true"
+	></div>
+	<button class="btn bg-blue-500" onclick={addJournalEntry} style="width: fit-content;"
 		><FontAwesomeIcon icon={faPlus} /></button
 	>
 </div>
@@ -145,19 +150,32 @@
 				{/if}
 				{entry.date}</span
 			>
-			{#if page.params.date === entry.date}<button class="btn" onclick={() => (editMode = true)}
-					><FontAwesomeIcon icon={faEdit} /></button
-				><button class="btn" onclick={() => deleteEntry(entry.id)}
+			{#if page.params.date === entry.date}<button
+					class="btn bg-blue-500"
+					onclick={() => (editMode = true)}><FontAwesomeIcon icon={faEdit} /></button
+				><button class="btn bg-red-400" onclick={() => deleteEntry(entry.id)}
 					><FontAwesomeIcon icon={faMinus} /></button
 				>{/if}
 		</p>
 		{#if page.params.date === entry.date}
 			{#await decryptEntry(entry.entry, entry.iv) then plaintext}
 				{#if editMode}
-					<textarea bind:value={editText} use:autosize style="width: 100%;"></textarea>
-					<button class="btn">Cancel</button><button
-						class="btn"
-						onclick={() => updateJournalEntry(entry.id)}>Save</button
+					<div class="p-2">
+						<div
+							class="auto-grow"
+							bind:innerText={editText}
+							contenteditable="true"
+							role="textbox"
+							aria-multiline="true"
+						></div>
+					</div>
+					<button
+						class="btn bg-red-300"
+						onclick={() => {
+							editMode = false;
+							editText = plaintext!;
+						}}>Cancel</button
+					><button class="btn bg-blue-500" onclick={() => updateJournalEntry(entry.id)}>Save</button
 					>
 				{:else}
 					<div class="whitespace-pre-line p-4">{plaintext}</div>

@@ -13,7 +13,7 @@
 	}
 </script>
 
-<input bind:value={journalToAdd} /><button class="btn" onclick={addJournal}
+<input bind:value={journalToAdd} /><button class="btn bg-blue-500" onclick={addJournal}
 	><FontAwesomeIcon icon={faPlus} /></button
 >
 <br />

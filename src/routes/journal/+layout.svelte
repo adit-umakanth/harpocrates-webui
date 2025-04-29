@@ -23,18 +23,18 @@
 	{#if keyState.derivedKey === null}
 		<input type="password" bind:value={password} />
 		<button
-			class="btn"
+			class="btn bg-blue-500"
 			onclick={() => {
 				keyState.deriveKey(password);
 				password = '';
 			}}><FontAwesomeIcon icon={faUnlock} /> Unlock</button
 		>
 	{:else}
-		<button class="btn" onclick={() => (keyState.derivedKey = null)}
+		<button class="btn bg-blue-500" onclick={() => (keyState.derivedKey = null)}
 			><FontAwesomeIcon icon={faLock} /> Lock</button
 		>
 	{/if}
-	<button class="btn" onclick={() => auth.signOut()}
+	<button class="btn bg-blue-500" onclick={() => auth.signOut()}
 		><FontAwesomeIcon icon={faRightFromBracket} /> Sign out</button
 	><br /><br />
 </nav>

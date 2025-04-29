@@ -61,14 +61,14 @@
 </script>
 
 <p>Login</p>
-<button class="btn" onclick={initiateSignIn}>Google</button>
-<button class="btn" onclick={backToMain}>Back to main</button>
+<button class="btn bg-blue-500" onclick={initiateSignIn}>Google</button>
+<button class="btn bg-blue-500" onclick={backToMain}>Back to main</button>
 <br />
 <hr />
 <br />
 <div class="m-auto flex w-screen flex-row flex-wrap gap-3 p-2 md:size-1/4">
 	<input class="basis-full" type="text" placeholder="Email" bind:value={manualEmail} />
 	<input class="basis-full" type="password" placeholder="Password" bind:value={manualPassword} />
-	<button class="btn flex-1" onclick={createUser}>Register</button>
-	<button class="btn flex-1" onclick={initiateSignInWithEmail}>Sign in</button>
+	<button class="btn flex-1 bg-blue-500" onclick={createUser}>Register</button>
+	<button class="btn flex-1 bg-blue-500" onclick={initiateSignInWithEmail}>Sign in</button>
 </div>
