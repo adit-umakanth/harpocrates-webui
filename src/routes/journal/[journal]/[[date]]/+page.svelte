@@ -78,7 +78,8 @@
 
 	async function updateJournalEntry(documentId: string) {
 		let encryptedData = await encryptEntry(editText);
-		updateDoc(doc(db, `users/${userState.user!.uid}/entries`, documentId), encryptedData);
+		await updateDoc(doc(db, `users/${userState.user!.uid}/entries`, documentId), encryptedData);
+		editMode = false;
 	}
 
 	async function decryptEntry(ciphertext: string, iv: string | null | undefined) {
