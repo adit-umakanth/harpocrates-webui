@@ -13,8 +13,9 @@
 	}
 </script>
 
-<input bind:value={journalToAdd} /><button class="btn bg-blue-500" onclick={addJournal}
-	><FontAwesomeIcon icon={faPlus} /></button
+<input class="input-field" bind:value={journalToAdd} /><button
+	class="btn bg-blue-500"
+	onclick={addJournal}><FontAwesomeIcon icon={faPlus} /></button
 >
 <br />
 <br />

@@ -19,9 +19,9 @@
 	});
 </script>
 
-<nav class="flex flex-row border-b-2 border-gray-500 bg-white p-2">
+<nav class="bg-surface-a10 flex flex-row p-8">
 	{#if keyState.derivedKey === null}
-		<input type="password" bind:value={password} />
+		<input class="input-field" type="password" bind:value={password} />
 		<button
 			class="btn bg-blue-500"
 			onclick={() => {
