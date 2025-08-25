@@ -44,11 +44,7 @@
 			return;
 		}
 		entriesCollection = collection(db, `users/${userState.user!.uid}/entries`);
-		const journalQuery = query(
-			entriesCollection,
-			where('journal', '==', page.params.journal),
-			orderBy('date', 'desc')
-		);
+		const journalQuery = query(entriesCollection, orderBy('date', 'desc'));
 		dbState.loadJournalEntries(userState.user!.uid, journalQuery);
 	});
 
@@ -69,7 +65,6 @@
 		let encryptedData = await encryptEntry(newEntryState.entry);
 		addDoc(entriesCollection!, {
 			date: newEntryState.date,
-			journal: page.params.journal,
 			...encryptedData
 		});
 		newEntryState = emptyEntryState;
@@ -104,14 +99,14 @@
 	async function deleteEntry(documentId: string) {
 		console.log('Deleting');
 		deleteDoc(doc(db, `users/${userState.user!.uid}/entries`, documentId));
-		goto(`/journal/${page.params.journal}`);
+		goto('/journal');
 	}
 </script>
 
 <p class="capitalize">{page.params.journal}</p>
 <br />
 <div class="flex flex-col gap-2 p-4">
-	<input type="date" bind:value={newEntryState.date} />
+	<input class="input-field" type="date" bind:value={newEntryState.date} />
 	<div
 		class="auto-grow"
 		bind:innerText={newEntryState.entry}
@@ -138,11 +133,7 @@
 			<span
 				class="p-4"
 				onclick={() =>
-					goto(
-						page.params.date === entry.date
-							? `/journal/${page.params.journal}`
-							: `/journal/${page.params.journal}/${entry.date}`
-					)}
+					goto(page.params.date === entry.date ? '/journal' : `/journal/${entry.date}`)}
 				>{#if page.params.date === entry.date}
 					<FontAwesomeIcon class="pr-2 text-blue-500" icon={faCaretDown} />
 				{:else}
