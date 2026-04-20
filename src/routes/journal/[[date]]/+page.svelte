@@ -26,6 +26,7 @@
 		type DocumentData
 	} from 'firebase/firestore';
 	import { dbState } from '$lib/dbState.svelte';
+	import dayjs from 'dayjs';
 
 	const db = getFirestore(firebaseApp);
 
@@ -33,7 +34,7 @@
 	let editText = $state('');
 
 	const emptyEntryState = {
-		date: '',
+		date: dayjs().format('YYYY-MM-DD'),
 		entry: ''
 	};
 	let newEntryState = $state(emptyEntryState);
@@ -106,7 +107,7 @@
 <p class="capitalize">{page.params.journal}</p>
 <br />
 <div class="flex flex-col gap-2 p-4">
-	<input class="input-field" type="date" bind:value={newEntryState.date} />
+	<input class="input" type="date" bind:value={newEntryState.date} />
 	<div
 		class="auto-grow"
 		bind:innerText={newEntryState.entry}
@@ -169,7 +170,7 @@
 					><button class="btn bg-blue-500" onclick={() => updateJournalEntry(entry.id)}>Save</button
 					>
 				{:else}
-					<div class="whitespace-pre-line p-4">{plaintext}</div>
+					<div class="p-4 whitespace-pre-line">{plaintext}</div>
 				{/if}
 			{/await}
 		{/if}

@@ -1,13 +1,48 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
+
+@plugin 'daisyui';
+@plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/container-queries';
+
+@theme {
+	--color-primary-a10: #638ed9;
+	--color-primary-a20: #7a9bde;
+	--color-primary-a30: #8ea9e3;
+	--color-primary-a40: #a2b7e8;
+	--color-primary-a50: #b5c5ed;
+	--color-surface-a0: #121212;
+	--color-surface-a10: #282828;
+	--color-surface-a20: #3f3f3f;
+	--color-surface-a30: #575757;
+	--color-surface-a40: #717171;
+	--color-surface-a50: #8b8b8b;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+}
 
 html {
 	@apply bg-surface-a0 text-white;
 }
 
 .input-field {
-	@apply rounded-lg border-surface-a20 bg-surface-a10;
+	@apply border-surface-a20 bg-surface-a10 rounded-lg;
 }
 
 .btn {

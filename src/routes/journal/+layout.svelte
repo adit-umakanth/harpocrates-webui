@@ -21,20 +21,20 @@
 
 <nav class="bg-surface-a10 flex flex-row p-8">
 	{#if keyState.derivedKey === null}
-		<input class="input-field" type="password" bind:value={password} />
+		<input class="input input-primary" type="password" bind:value={password} />
 		<button
-			class="btn bg-blue-500"
+			class="btn btn-primary"
 			onclick={() => {
 				keyState.deriveKey(password);
 				password = '';
 			}}><FontAwesomeIcon icon={faUnlock} /> Unlock</button
 		>
 	{:else}
-		<button class="btn bg-blue-500" onclick={() => (keyState.derivedKey = null)}
+		<button class="btn btn-primary" onclick={() => (keyState.derivedKey = null)}
 			><FontAwesomeIcon icon={faLock} /> Lock</button
 		>
 	{/if}
-	<button class="btn bg-blue-500" onclick={() => auth.signOut()}
+	<button class="btn btn-primary" onclick={() => auth.signOut()}
 		><FontAwesomeIcon icon={faRightFromBracket} /> Sign out</button
 	><br /><br />
 </nav>
