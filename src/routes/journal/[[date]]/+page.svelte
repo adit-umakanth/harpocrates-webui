@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import firebaseApp from '$lib/firebase';
 	import { keyState } from '$lib/keyState.svelte';
 	import { userState } from '$lib/userState.svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
@@ -18,17 +17,13 @@
 		CollectionReference,
 		deleteDoc,
 		doc,
-		getFirestore,
 		orderBy,
 		query,
 		updateDoc,
-		where,
 		type DocumentData
 	} from 'firebase/firestore';
-	import { dbState } from '$lib/dbState.svelte';
+	import { dbState, db } from '$lib/dbState.svelte';
 	import dayjs from 'dayjs';
-
-	const db = getFirestore(firebaseApp);
 
 	let editMode = $state(false);
 	let editText = $state('');

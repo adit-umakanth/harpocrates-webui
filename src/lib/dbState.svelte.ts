@@ -1,8 +1,12 @@
 import {
 	doc,
 	DocumentReference,
-	getFirestore,
+	enablePersistentCacheIndexAutoCreation,
+	getPersistentCacheIndexManager,
+	initializeFirestore,
 	onSnapshot,
+	persistentLocalCache,
+	persistentSingleTabManager,
 	Query,
 	updateDoc,
 	type DocumentData
@@ -22,13 +26,25 @@ type Entry = {
 	iv?: string;
 };
 
+export const db = initializeFirestore(firebaseApp, {
+	localCache: persistentLocalCache({
+		tabManager: persistentSingleTabManager({
+			forceOwnership: true
+		})
+	})
+});
+
+const indexManager = getPersistentCacheIndexManager(db);
+if (indexManager) {
+	enablePersistentCacheIndexAutoCreation(indexManager);
+}
+
 function createDbState() {
 	let userInfoDoc = $state.raw<UserInfo | null>(null);
 	let userInfoDocReference: DocumentReference<DocumentData, DocumentData>;
 	let journalEntryDocs = $state.raw<[Entry] | null>(null);
 
 	function loadDbData(uid: string) {
-		let db = getFirestore(firebaseApp);
 		userInfoDocReference = doc(db, 'users', uid);
 		onSnapshot(userInfoDocReference, async (newDoc) => {
 			userInfoDoc = newDoc.data() as UserInfo;
@@ -42,8 +58,9 @@ function createDbState() {
 	}
 
 	function loadJournalEntries(uid: string, journalQuery: Query<DocumentData, DocumentData>) {
-		let db = getFirestore(firebaseApp);
 		onSnapshot(journalQuery, (querySnapshot) => {
+			console.log(querySnapshot);
+			console.log(querySnapshot.docChanges());
 			const tempEntries: any = [];
 			querySnapshot.forEach((doc) => {
 				tempEntries.push({ ...doc.data(), id: doc.id });
